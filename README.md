@@ -1,3 +1,3 @@
 # Face Detector
 
-Detect faces present in images
+<i>This project is actively maintained and regularly updated</i>
