@@ -1,5 +1,6 @@
 env/
 wider_face/
 celeb_a/
+__pycache__/
 .ipynb_checkpoints
 .DS_Store
