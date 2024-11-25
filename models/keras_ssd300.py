@@ -23,7 +23,6 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Lambda, Activation, Conv2D, MaxPooling2D, ZeroPadding2D, Reshape, Concatenate
 from tensorflow.keras.regularizers import l2
 import tensorflow.keras.backend as K
-from tensorflow.keras.applications import VGG16
 
 from keras_layers.keras_layer_AnchorBoxes import AnchorBoxes
 from keras_layers.keras_layer_L2Normalization import L2Normalization
@@ -51,7 +50,7 @@ def ssd_300(image_size,
             variances=[0.1, 0.1, 0.2, 0.2],
             coords='centroids',
             normalize_coords=True,
-            subtract_mean=[123, 117, 104], # [R, G, B]
+            subtract_mean=[123, 117, 104],
             divide_by_stddev=None,
             swap_channels=[2, 1, 0],
             confidence_thresh=0.01,
@@ -273,7 +272,6 @@ def ssd_300(image_size,
     if swap_channels:
         x1 = Lambda(input_channel_swap, output_shape=(img_height, img_width, img_channels), name='input_channel_swap')(x1)
 
-    '''
     conv1_1 = Conv2D(64, (3, 3), activation='relu', padding='same', kernel_initializer='he_normal', kernel_regularizer=l2(l2_reg), name='conv1_1')(x1)
     conv1_2 = Conv2D(64, (3, 3), activation='relu', padding='same', kernel_initializer='he_normal', kernel_regularizer=l2(l2_reg), name='conv1_2')(conv1_1)
     pool1 = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='same', name='pool1')(conv1_2)
@@ -296,12 +294,8 @@ def ssd_300(image_size,
     conv5_2 = Conv2D(512, (3, 3), activation='relu', padding='same', kernel_initializer='he_normal', kernel_regularizer=l2(l2_reg), name='conv5_2')(conv5_1)
     conv5_3 = Conv2D(512, (3, 3), activation='relu', padding='same', kernel_initializer='he_normal', kernel_regularizer=l2(l2_reg), name='conv5_3')(conv5_2)
     pool5 = MaxPooling2D(pool_size=(3, 3), strides=(1, 1), padding='same', name='pool5')(conv5_3)
-    '''
 
-    ### Load the VGG16 model (base model) with pretrained weights
-    vgg16_model = VGG16(weights = "imagenet", include_top = False, input_shape = (300, 300, 3))(x1)
-
-    fc6 = Conv2D(1024, (3, 3), dilation_rate=(6, 6), activation='relu', padding='same', kernel_initializer='he_normal', kernel_regularizer=l2(l2_reg), name='fc6')(vgg16_model)
+    fc6 = Conv2D(1024, (3, 3), dilation_rate=(6, 6), activation='relu', padding='same', kernel_initializer='he_normal', kernel_regularizer=l2(l2_reg), name='fc6')(pool5)
 
     fc7 = Conv2D(1024, (1, 1), activation='relu', padding='same', kernel_initializer='he_normal', kernel_regularizer=l2(l2_reg), name='fc7')(fc6)
 
