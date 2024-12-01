@@ -33,8 +33,8 @@ class L2Normalization(Layer):
             SSD paper.
 
     Input shape:
-        4D tensor of shape `(batch, channels, height, width)` if `dim_ordering = 'th'`
-        or `(batch, height, width, channels)` if `dim_ordering = 'tf'`.
+        4D tensor of shape `(batch, channels, height, width)` if `image_data_format = 'th'`
+        or `(batch, height, width, channels)` if `image_data_format = 'tf'`.
 
     Returns:
         The scaled tensor. Same shape as the input tensor.
@@ -44,18 +44,30 @@ class L2Normalization(Layer):
     '''
 
     def __init__(self, gamma_init=20, **kwargs):
-        if K.image_dim_ordering() == 'tf':
+        if K.image_data_format() == 'channels_last':
             self.axis = 3
         else:
             self.axis = 1
         self.gamma_init = gamma_init
         super(L2Normalization, self).__init__(**kwargs)
 
+    # def build(self, input_shape):
+    #     self.input_spec = [InputSpec(shape=input_shape)]
+    #     gamma = self.gamma_init * np.ones((input_shape[self.axis],))
+    #     self.gamma = K.variable(gamma, name='{}_gamma'.format(self.name))
+    #     self.trainable_weights = [self.gamma]
+    #     super(L2Normalization, self).build(input_shape)
+
     def build(self, input_shape):
         self.input_spec = [InputSpec(shape=input_shape)]
-        gamma = self.gamma_init * np.ones((input_shape[self.axis],))
-        self.gamma = K.variable(gamma, name='{}_gamma'.format(self.name))
-        self.trainable_weights = [self.gamma]
+        self.gamma = self.add_weight(
+            name='{}_gamma'.format(self.name),
+            shape=(input_shape[self.axis],),
+            #initializer='ones',
+            initializer = self.gamma_init * np.ones((input_shape[self.axis],)),
+            regularizer=None,
+            constraint=None,
+            trainable=True)
         super(L2Normalization, self).build(input_shape)
 
     def call(self, x, mask=None):
