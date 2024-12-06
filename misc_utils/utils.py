@@ -1,4 +1,5 @@
 import os
+import numpy as np
 
 def create_virtual_folder(src_folder, virtual_folder):
     '''
@@ -33,3 +34,43 @@ def create_virtual_folder(src_folder, virtual_folder):
                 log = f"Skipping existing symlink: {symlink_path}"
             logs.append(log)
     return logs
+
+
+def format_bbox(bbox):
+    x1, y1, w, h = list(map(int, bbox.split()))
+    formatted_bbox = list(map(str, [x1, x1+w, y1, y1+h]))
+    return " ".join(formatted_bbox)
+
+
+def format_labels(src, dest):
+    ### Read src file
+    with open(src, 'r') as f:
+        bbox_anno = [line.rstrip("\n, ") for line in f.readlines()]    
+    ### Create a dictionary such that it contains image_name:respective_annotations 
+    img_indices = []
+    n_bbxes = []
+    for i in range(len(bbox_anno)):
+        if bbox_anno[i].endswith((".jpg", ".jpeg", ".png")):
+            img_indices.append(i)
+            n_bbxes.append(int(bbox_anno[i+1]))
+    annotations = {}
+    collection = []
+    for idx,n in list(zip(img_indices, n_bbxes)):
+        img_name = bbox_anno[idx]
+        res_annot = bbox_anno[idx+2 : idx+2+n]
+        ### Remove blur, expression, illumination, invalid, occlusion and pose details. Keep x1, y1, w and h.
+        res_annot = [" ".join(annot.split()[:4]) for annot in res_annot]
+        annotations[img_name] = res_annot
+        ### Format bboxes
+        for bbox in res_annot:
+            formatted_bbox = format_bbox(bbox)
+            ### Only class available in wider face dataset is face. Therefore class_id must equal to 1 in each row in ground truth csv file.
+            class_id = 1
+            collection.append(f"{img_name} {formatted_bbox} {str(class_id)}")
+    ### Save to csv
+    rows = [entry.split() for entry in collection]
+    np.savetxt(fname=dest, X=rows, delimiter=',', fmt="%s")
+    log = f"Formatted file succesfully saved to {dest}"
+    return log
+    
+    
