@@ -62,14 +62,18 @@ def format_labels(src, dest):
         res_annot = [" ".join(annot.split()[:4]) for annot in res_annot]
         annotations[img_name] = res_annot
         ### Format bboxes
-        for bbox in res_annot:
-            formatted_bbox = format_bbox(bbox)
-            ### Only class available in wider face dataset is face. Therefore class_id must equal to 1 in each row in ground truth csv file.
+        if not(res_annot == []):
             class_id = 1
-            collection.append(f"{img_name} {formatted_bbox} {str(class_id)}")
+            for bbox in res_annot:
+                formatted_bbox = format_bbox(bbox)
+                ### Only class available in wider face dataset is face. Therefore class_id must equal to 1 in each row in ground truth csv file.
+                collection.append(f"{img_name} {formatted_bbox} {str(class_id)}")
+        else:
+            class_id = 0
+            collection.append(f"{img_name} {'0 0 0 0'} {str(class_id)}")
     ### Save to csv
     rows = [entry.split() for entry in collection]
-    np.savetxt(fname=dest, X=rows, delimiter=',', fmt="%s")
+    np.savetxt(fname=dest, X=rows, delimiter=',', fmt="%s", header='image_name xmin xmax ymin ymax class_id')
     log = f"Formatted file succesfully saved to {dest}"
     return log
     
