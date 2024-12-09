@@ -337,7 +337,7 @@ class DataGenerator:
 
         # Now that we've made sure that the data is sorted by file names,
         # we can compile the actual samples and labels lists
-
+        
         current_file = data[0][0] # The current image for which we're collecting the ground truth boxes
         current_image_id = data[0][0].split('.')[0] # The image ID will be the portion of the image name before the first dot.
         current_labels = [] # The list where we collect all ground truth boxes for a given image
