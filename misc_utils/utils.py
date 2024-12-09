@@ -60,6 +60,9 @@ def format_labels(src, dest):
         res_annot = bbox_anno[idx+2 : idx+2+n]
         ### Remove blur, expression, illumination, invalid, occlusion and pose details. Keep x1, y1, w and h.
         res_annot = [" ".join(annot.split()[:4]) for annot in res_annot]
+        ### Remove folder name from image name
+        assert len(img_name.split('/')) == 2
+        _, img_name = img_name.split('/')
         annotations[img_name] = res_annot
         ### Format bboxes
         if not(res_annot == []):
