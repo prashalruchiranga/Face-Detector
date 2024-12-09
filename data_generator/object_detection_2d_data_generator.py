@@ -1131,7 +1131,8 @@ class DataGenerator:
 
             # CAUTION: Converting `batch_X` into an array will result in an empty batch if the images have varying sizes
             #          or varying numbers of channels. At this point, all images must have the same size and the same
-            #          number of channels.
+            #          number of channels.]
+            
             batch_X = np.array(batch_X)
             if (batch_X.size == 0):
                 raise DegenerateBatchError("You produced an empty batch. This might be because the images in the batch vary " +
@@ -1171,7 +1172,7 @@ class DataGenerator:
             if 'original_images' in returns: ret.append(batch_original_images)
             if 'original_labels' in returns: ret.append(batch_original_labels)
 
-            yield ret
+            yield tuple(ret)
 
     def save_dataset(self,
                      filenames_path='filenames.pkl',

@@ -515,8 +515,8 @@ class Scale:
             bottomrights = np.array([labels[:,xmax], labels[:,ymax], np.ones(labels.shape[0])])
             new_toplefts = (np.dot(M, toplefts)).T
             new_bottomrights = (np.dot(M, bottomrights)).T
-            labels[:,[xmin,ymin]] = np.round(new_toplefts, decimals=0).astype(np.int)
-            labels[:,[xmax,ymax]] = np.round(new_bottomrights, decimals=0).astype(np.int)
+            labels[:,[xmin,ymin]] = np.round(new_toplefts, decimals=0).astype(np.int64)
+            labels[:,[xmax,ymax]] = np.round(new_bottomrights, decimals=0).astype(np.int64)
 
             # Compute all valid boxes for this patch.
             if not (self.box_filter is None):
@@ -634,8 +634,8 @@ class RandomScale:
                     new_bottomrights = (np.dot(M, bottomrights)).T
 
                     new_labels = np.copy(labels)
-                    new_labels[:,[xmin,ymin]] = np.around(new_toplefts, decimals=0).astype(np.int)
-                    new_labels[:,[xmax,ymax]] = np.around(new_bottomrights, decimals=0).astype(np.int)
+                    new_labels[:,[xmin,ymin]] = np.around(new_toplefts, decimals=0).astype(np.int64)
+                    new_labels[:,[xmax,ymax]] = np.around(new_bottomrights, decimals=0).astype(np.int64)
 
                     # Check if the patch is valid.
                     if self.image_validator(labels=new_labels,
