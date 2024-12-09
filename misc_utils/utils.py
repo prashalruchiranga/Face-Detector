@@ -69,7 +69,7 @@ def format_labels(src, dest):
             class_id = 1
             for bbox in res_annot:
                 formatted_bbox = format_bbox(bbox)
-                ### Only class available in wider face dataset is face. Therefore class_id must equal to 1 in each row in ground truth csv file.
+                ### Only class available in wider face dataset is face. Therefore class_id is set to 1 in each row of ground truth csv file.
                 collection.append(f"{img_name} {formatted_bbox} {str(class_id)}")
         else:
             class_id = 0
