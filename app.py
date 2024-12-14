@@ -5,12 +5,8 @@ import tensorflow as tf
 from ssd_encoder_decoder.ssd_output_decoder import decode_detections
 import matplotlib.pyplot as plt
 
-def annotate_faces_in_video(weights_path, img_height, img_width, video_name):
-    name, _ = video_name.split('.')
-    input_video_path = f"examples/{name}.mp4"
-    output_video_path = f"examples/outputs/{name}_transformed2.mp4"
+def annotate_faces_in_video(weights_path, img_height, img_width, input_video_path, output_video_path):
     n_classes = 1
-
     # Open the video file
     cap = cv2.VideoCapture(input_video_path)
 
